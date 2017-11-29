@@ -20,6 +20,12 @@
   revision = "2efee857e7cfd4f3d0138cc3cbb1b4966962b93a"
 
 [[projects]]
+  name = "github.com/thoj/go-ircevent"
+  packages = ["."]
+  revision = "a6b1561a016c2a4aae183c3ef152c25d134c095d"
+  version = "0.1"
+
+[[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
@@ -40,6 +46,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "5320f2d3179f90a59780f24e65f5df3f227097ecba69c9c6383b12d35efd5ed0"
+  inputs-digest = "44a95b2c3087e6ec85a031674472a81d82b308d236795441fae90f3245b5fdab"
   solver-name = "gps-cdcl"
   solver-version = 1
