@@ -1,6 +1,7 @@
 package main
 
 import (
+	"irc-cryptowatch/client"
 	"irc-cryptowatch/irc"
 	"os"
 
@@ -29,7 +30,8 @@ func main() {
 		log.Debug("Debug mode enabled")
 	}
 
-	irc := irc.NewIrc(*nick, *user, *server, *channel, *port)
+	c := client.NewClient()
+	irc := irc.NewIrc(*nick, *user, *server, *channel, *port, c)
 	if irc.Connect() == false {
 		os.Exit(1)
 	}
