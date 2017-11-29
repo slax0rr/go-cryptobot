@@ -33,4 +33,6 @@ func main() {
 	if irc.Connect() == false {
 		os.Exit(1)
 	}
+
+	irc.Start()
 }

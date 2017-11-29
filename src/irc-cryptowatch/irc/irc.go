@@ -9,6 +9,7 @@ import (
 
 type IIrc interface {
 	Connect() bool
+	Start()
 }
 
 type Irc struct {
@@ -23,6 +24,10 @@ type Irc struct {
 func NewIrc(nick, user, server, channel string, port int) IIrc {
 	if user == "" {
 		user = nick
+	}
+
+	if string(channel[0]) != "#" {
+		channel = "#" + channel
 	}
 
 	i := new(Irc)
@@ -44,4 +49,10 @@ func (i *Irc) Connect() bool {
 		return false
 	}
 	return true
+}
+
+// starts the loop and starts listening to commands from the channel
+func (i *Irc) Start() {
+	i.conn.Join(i.channel)
+	i.conn.Loop()
 }
