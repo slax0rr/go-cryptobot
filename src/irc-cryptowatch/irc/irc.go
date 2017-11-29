@@ -2,6 +2,7 @@ package irc
 
 import (
 	"strconv"
+	"strings"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/thoj/go-ircevent"
@@ -55,4 +56,17 @@ func (i *Irc) Connect() bool {
 func (i *Irc) Start() {
 	i.conn.Join(i.channel)
 	i.conn.Loop()
+}
+
+func (i *Irc) registerEvents() {
+	i.conn.AddCallback("PRIVMSG", func(event *irc.Event) {
+		go func(event *irc.Event) {
+			// todo(slax0rr): move this to separate package
+			re := regexp.MustCompile("^\\.conv (.*?) (.*?)$")
+			m := re.FindStringSubmatch(event.Message())
+			if m == nil {
+				return
+			}
+		}(event)
+	})
 }
