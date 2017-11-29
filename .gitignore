@@ -1,0 +1,5 @@
+src/irc-cryptowatch/vendor/
+src/github.com
+src/golang.org
+bin
+pkg
