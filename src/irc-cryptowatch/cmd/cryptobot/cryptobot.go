@@ -51,6 +51,10 @@ func NewCryptoBot(irc irc.IIrc, client *client.Client) *CryptoBot {
 }
 
 func (cb *CryptoBot) conv(message, nick string, args []string) {
+	log.WithFields(log.Fields{
+		"message": message,
+	}).Debug("Received conversion message")
+
 	re := regexp.MustCompile("^(.*?)\\s+(.*?)$")
 	m := re.FindStringSubmatch(message)
 	if m == nil {
@@ -99,12 +103,14 @@ func (cb *CryptoBot) evHandler(message, nick string, args []string) {
 	}).Debug("Parsed received message")
 
 	command, ok := cb.commands[m[1]]
+	cmdMsg := m[2]
 	if !ok {
 		for _, curr := range cb.currencies {
 			if curr == m[1] {
 				command = cb.commands["conv"]
+				cmdMsg = m[0]
 			}
 		}
 	}
-	command(m[2], nick, args)
+	command(cmdMsg, nick, args)
 }
