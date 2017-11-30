@@ -57,6 +57,10 @@ func (c *Client) GetTicker(crypto, fiat string) *Response {
 		resp.Err[0] = err.Error()
 		return resp
 	}
+	if res.StatusCode != 200 {
+		resp.Err = make([]string, 1, 1)
+		resp.Err[0] = "Unexpected API response"
+	}
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
