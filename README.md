@@ -1,6 +1,6 @@
-# IRC Cryptowatch Bot
+# IRC cryptocurrency Bot
 
-Simple Cryptocurrency bot for Internet Relay Chat.
+Simple cryptocurrency bot for Internet Relay Chat.
 
 ## Installation
 
