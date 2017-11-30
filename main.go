@@ -1,11 +1,11 @@
 package main
 
 import (
-	"irc-cryptowatch/client"
-	"irc-cryptowatch/irc"
 	"os"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/slax0rr/go-cryptobot/client"
+	"github.com/slax0rr/go-cryptobot/irc"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 

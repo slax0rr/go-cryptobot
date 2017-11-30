@@ -1,12 +1,12 @@
 package main
 
 import (
-	"irc-cryptowatch/client"
-	"irc-cryptowatch/irc"
 	"regexp"
 	"strings"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/slax0rr/go-cryptobot/client"
+	"github.com/slax0rr/go-cryptobot/irc"
 )
 
 type CryptoBot struct {

@@ -1,11 +1,11 @@
 package irc
 
 import (
-	"irc-cryptowatch/client"
 	"regexp"
 	"strconv"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/slax0rr/go-cryptobot/client"
 	"github.com/thoj/go-ircevent"
 )
 
