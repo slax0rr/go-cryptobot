@@ -40,29 +40,9 @@ func NewClient() *Client {
 func (c *Client) GetTicker(crypto, fiat string) *Response {
 	crypto = strings.ToLower(crypto)
 	fiat = strings.ToLower(fiat)
-	url := c.url + "ticker/" + crypto + fiat
-
 	resp := new(Response)
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		resp.Err = make([]string, 1, 1)
-		resp.Err[0] = err.Error()
-		return resp
-	}
-
-	res, err := c.client.Do(req)
-	if err != nil {
-		resp.Err = make([]string, 1, 1)
-		resp.Err[0] = err.Error()
-		return resp
-	}
-	if res.StatusCode != 200 {
-		resp.Err = make([]string, 1, 1)
-		resp.Err[0] = "Unexpected API response"
-	}
-
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := c.sendRequest(c.url + "ticker/" + crypto + fiat)
 	if err != nil {
 		resp.Err = make([]string, 1, 1)
 		resp.Err[0] = err.Error()
@@ -75,10 +55,35 @@ func (c *Client) GetTicker(crypto, fiat string) *Response {
 
 	err = json.Unmarshal(body, &resp)
 	if err != nil {
+		log.WithFields(log.Fields{
+			"error": err,
+		}).Error("Error unmarshaling response data.")
 		resp.Err = make([]string, 1, 1)
-		resp.Err[0] = err.Error()
+		resp.Err[0] = "Error unmarshaling response data."
 		return resp
 	}
 
 	return resp
+}
+
+func (c *Client) sendRequest(url string) ([]byte, error) {
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	if res.StatusCode != 200 {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
 }
