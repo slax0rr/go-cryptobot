@@ -36,5 +36,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	irc.Start()
+	cb := NewCryptoBot(irc, c)
+
+	irc.Start(cb.evHandler)
 }

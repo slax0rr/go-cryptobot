@@ -4,7 +4,6 @@ import (
 	"irc-cryptowatch/client"
 	"regexp"
 	"strconv"
-	"strings"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/thoj/go-ircevent"
@@ -12,7 +11,8 @@ import (
 
 type IIrc interface {
 	Connect() bool
-	Start()
+	Start(func(string, string, []string))
+	Write(string)
 }
 
 type Irc struct {
@@ -57,41 +57,25 @@ func (i *Irc) Connect() bool {
 }
 
 // starts the loop and starts listening to commands from the channel
-func (i *Irc) Start() {
+func (i *Irc) Start(evHandler func(string, string, []string)) {
 	i.conn.Join(i.channel)
-	i.registerEvents()
+	i.registerEvents(evHandler)
 	i.conn.Loop()
 }
 
-func (i *Irc) registerEvents() {
+func (i *Irc) Write(msg string) {
+	i.conn.Privmsg(i.channel, msg)
+}
+
+func (i *Irc) registerEvents(evHandler func(string, string, []string)) {
 	i.conn.AddCallback("PRIVMSG", func(event *irc.Event) {
 		go func(event *irc.Event) {
-			log.WithFields(log.Fields{
-				"msg": event.Message(),
-			}).Debug("Message received")
-
-			// todo(slax0rr): move this to separate package
-			re := regexp.MustCompile("^" + i.nick + ".?\\s(.*?) (.*?)$")
+			re := regexp.MustCompile("^" + i.nick + ".?\\s+(.*?)$")
 			m := re.FindStringSubmatch(event.Message())
 			if m == nil {
 				return
 			}
-			log.WithFields(log.Fields{
-				"parsed": m,
-			}).Debug("Parsed received message")
-
-			resp := i.client.GetTicker(m[1], m[2])
-			if resp.Err != nil {
-				i.conn.Privmsg(i.channel, resp.Err[0])
-			}
-
-			crypto := strings.ToUpper(m[1])
-			fiat := strings.ToUpper(m[2])
-			msg := crypto + " to " + fiat + ": Last: " + resp.Last +
-				" High: " + resp.High +
-				" Low: " + resp.Low +
-				" Open: " + resp.Open
-			i.conn.Privmsg(i.channel, msg)
+			evHandler(m[1], event.Nick, event.Arguments)
 		}(event)
 	})
 }
