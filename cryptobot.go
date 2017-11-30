@@ -62,8 +62,8 @@ func (cb *CryptoBot) conv(message, nick string, args []string) {
 		return
 	}
 
-	curr1 := strings.ToLower(m[1])
-	curr2 := strings.ToLower(m[2])
+	curr1 := m[1]
+	curr2 := m[2]
 	ok := false
 	for _, pair := range cb.pairs {
 		if pair == curr1+curr2 {
@@ -93,6 +93,7 @@ func (cb *CryptoBot) evHandler(message, nick string, args []string) {
 		"msg": message,
 	}).Debug("Message received")
 
+	message = strings.ToLower(message)
 	re := regexp.MustCompile("^(.*?)\\s+(.*?)$")
 	m := re.FindStringSubmatch(message)
 	if m == nil {
@@ -112,5 +113,10 @@ func (cb *CryptoBot) evHandler(message, nick string, args []string) {
 			}
 		}
 	}
+
+	log.WithFields(log.Fields{
+		"command": cmdMsg,
+	}).Debug("Executing command with message")
+
 	command(cmdMsg, nick, args)
 }
