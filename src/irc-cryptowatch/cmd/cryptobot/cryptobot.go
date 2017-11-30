@@ -55,7 +55,7 @@ func (cb *CryptoBot) conv(message, nick string, args []string) {
 		"message": message,
 	}).Debug("Received conversion message")
 
-	re := regexp.MustCompile("^(.*?)\\s+(.*?)$")
+	re := regexp.MustCompile("^(.{3})\\s+(.{3})$")
 	m := re.FindStringSubmatch(message)
 	if m == nil {
 		log.Error("Conversion did not parse properly.")
