@@ -32,23 +32,29 @@ func NewCryptoBot(irc irc.IIrc, client *client.Client) *CryptoBot {
 		"eth",
 	}
 	cb.pairs = []string{
-		"btcusd",
-		"btceur",
-		"xrpusd",
-		"xrpeur",
-		"xrpbtc",
-		"ltcusd",
-		"ltceur",
-		"ltcbtc",
-		"ethusd",
-		"etheur",
-		"ethbtc",
+		"btc usd",
+		"btc eur",
+		"xrp usd",
+		"xrp eur",
+		"xrp btc",
+		"ltc usd",
+		"ltc eur",
+		"ltc btc",
+		"eth usd",
+		"eth eur",
+		"eth btc",
 	}
 	cb.commands = map[string]func(string, string, []string){
-		"conv": cb.conv,
-		"help": cb.printHelp,
+		"conv":  cb.conv,
+		"help":  cb.printHelp,
+		"pairs": cb.printPairs,
 	}
 	return cb
+}
+
+func (cb *CryptoBot) printPairs(message, nick string, args []string) {
+	cb.irc.WritePriv(nick, "Available currency pairs for conversion:")
+	cb.irc.WritePriv(nick, strings.Join(cb.pairs, ", "))
 }
 
 func (cb *CryptoBot) printHelp(message, nick string, args []string) {
@@ -137,8 +143,9 @@ func (cb *CryptoBot) isValidPair(curr1, curr2 string) bool {
 	if cb.isCurrency(curr1) == false || cb.isCurrency(curr2) == false {
 		return false
 	}
+	p := curr1 + " " + curr2
 	for _, pair := range cb.pairs {
-		if pair == curr1+curr2 {
+		if pair == p {
 			return true
 		}
 	}
