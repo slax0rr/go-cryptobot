@@ -103,7 +103,7 @@ func (cb *CryptoBot) conv(message, nick string, args []string) {
 			" Open: " + resp.Open
 	} else {
 		last, _ := strconv.ParseFloat(resp.Last, 64)
-		strAmount := strconv.FormatFloat(amount, 'f', 2, 64)
+		strAmount := strconv.FormatFloat(amount, 'f', 8, 64)
 		val := strconv.FormatFloat(last*amount, 'f', 2, 64)
 		msg = nick + ": " + strAmount + " " + curr1 + " to " + curr2 + ": " + val + " @ " + resp.Last
 	}
