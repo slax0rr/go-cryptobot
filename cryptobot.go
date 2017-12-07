@@ -2,6 +2,7 @@ package main
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 
 	log "github.com/Sirupsen/logrus"
@@ -79,7 +80,7 @@ func (cb *CryptoBot) conv(message, nick string, args []string) {
 		return
 	}
 
-	curr1 := m[1]
+	amount, curr1 := parseAmount(m[1])
 	curr2 := m[2]
 	if cb.isValidPair(curr1, curr2) == false {
 		log.WithFields(log.Fields{
@@ -94,10 +95,18 @@ func (cb *CryptoBot) conv(message, nick string, args []string) {
 		cb.irc.Write(nick + ": " + resp.Err[0])
 	}
 
-	msg := nick + ": " + curr1 + " to " + curr2 + ": Last: " + resp.Last +
-		" High: " + resp.High +
-		" Low: " + resp.Low +
-		" Open: " + resp.Open
+	var msg string
+	if amount == 0 {
+		msg = nick + ": " + curr1 + " to " + curr2 + ": Last: " + resp.Last +
+			" High: " + resp.High +
+			" Low: " + resp.Low +
+			" Open: " + resp.Open
+	} else {
+		last, _ := strconv.ParseFloat(resp.Last, 64)
+		strAmount := strconv.FormatFloat(amount, 'f', 2, 64)
+		val := strconv.FormatFloat(last*amount, 'f', 2, 64)
+		msg = nick + ": " + strAmount + " " + curr1 + " to " + curr2 + ": " + val + " @ " + resp.Last
+	}
 	cb.irc.Write(msg)
 }
 
@@ -150,4 +159,17 @@ func (cb *CryptoBot) isValidPair(curr1, curr2 string) bool {
 		}
 	}
 	return false
+}
+
+func parseAmount(data string) (float64, string) {
+	re := regexp.MustCompile("^([\\d.]+)\\s+(.+)$")
+	m := re.FindStringSubmatch(data)
+	if m == nil {
+		return 0, data
+	}
+	f, err := strconv.ParseFloat(m[1], 64)
+	if err != nil {
+		f = 0
+	}
+	return f, m[2]
 }
