@@ -106,12 +106,8 @@ func (cb *CryptoBot) evHandler(message, nick string, args []string) {
 	command, ok := cb.commands[m[1]]
 	cmdMsg := m[2]
 	if !ok {
-		for _, curr := range cb.currencies {
-			if curr == m[1] {
-				command = cb.commands["conv"]
-				cmdMsg = m[0]
-			}
-		}
+		command = cb.commands["conv"]
+		cmdMsg = m[0]
 	}
 
 	log.WithFields(log.Fields{
