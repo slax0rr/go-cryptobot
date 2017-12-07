@@ -13,6 +13,7 @@ type IIrc interface {
 	Connect() bool
 	Start(func(string, string, []string))
 	Write(string)
+	WritePriv(string, string)
 }
 
 type Irc struct {
@@ -65,6 +66,10 @@ func (i *Irc) Start(evHandler func(string, string, []string)) {
 
 func (i *Irc) Write(msg string) {
 	i.conn.Privmsg(i.channel, msg)
+}
+
+func (i *Irc) WritePriv(nick, msg string) {
+	i.conn.Privmsg(nick, msg)
 }
 
 func (i *Irc) registerEvents(evHandler func(string, string, []string)) {
