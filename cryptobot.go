@@ -55,7 +55,7 @@ func (cb *CryptoBot) conv(message, nick string, args []string) {
 		"message": message,
 	}).Debug("Received conversion message")
 
-	re := regexp.MustCompile("^(.{3})\\s+(.{3})$")
+	re := regexp.MustCompile("^(.+)\\s+(.+)$")
 	m := re.FindStringSubmatch(message)
 	if m == nil {
 		log.Error("Conversion did not parse properly.")
@@ -64,15 +64,11 @@ func (cb *CryptoBot) conv(message, nick string, args []string) {
 
 	curr1 := m[1]
 	curr2 := m[2]
-	ok := false
-	for _, pair := range cb.pairs {
-		if pair == curr1+curr2 {
-			ok = true
-			break
-		}
-	}
-	if ok == false {
-		cb.irc.Write(nick + ": Unknown currency pair: " + curr1 + " " + curr2)
+	if cb.isValidPair(curr1, curr2) == false {
+		log.WithFields(log.Fields{
+			"currency1": curr1,
+			"currency2": curr2,
+		}).Error("Received data is not valid for currency conversion")
 		return
 	}
 
@@ -115,4 +111,25 @@ func (cb *CryptoBot) evHandler(message, nick string, args []string) {
 	}).Debug("Executing command with message")
 
 	command(cmdMsg, nick, args)
+}
+
+func (cb *CryptoBot) isCurrency(currency string) bool {
+	for _, curr := range cb.currencies {
+		if curr == currency {
+			return true
+		}
+	}
+	return false
+}
+
+func (cb *CryptoBot) isValidPair(curr1, curr2 string) bool {
+	if cb.isCurrency(curr1) == false || cb.isCurrency(curr2) == false {
+		return false
+	}
+	for _, pair := range cb.pairs {
+		if pair == curr1+curr2 {
+			return true
+		}
+	}
+	return false
 }
