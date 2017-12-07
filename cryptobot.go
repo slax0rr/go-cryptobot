@@ -46,8 +46,19 @@ func NewCryptoBot(irc irc.IIrc, client *client.Client) *CryptoBot {
 	}
 	cb.commands = map[string]func(string, string, []string){
 		"conv": cb.conv,
+		"help": cb.printHelp,
 	}
 	return cb
+}
+
+func (cb *CryptoBot) printHelp(message, nick string, args []string) {
+	var cmds string
+	for k := range cb.commands {
+		cmds = cmds + k + ","
+	}
+	cmds = strings.TrimRight(cmds, ",")
+	cb.irc.WritePriv(nick, "Available commands:")
+	cb.irc.WritePriv(nick, cmds)
 }
 
 func (cb *CryptoBot) conv(message, nick string, args []string) {
@@ -90,7 +101,7 @@ func (cb *CryptoBot) evHandler(message, nick string, args []string) {
 	}).Debug("Message received")
 
 	message = strings.ToLower(message)
-	re := regexp.MustCompile("^(.*?)\\s+(.*?)$")
+	re := regexp.MustCompile("^(\\w+)\\s*(.*?)$")
 	m := re.FindStringSubmatch(message)
 	if m == nil {
 		return
