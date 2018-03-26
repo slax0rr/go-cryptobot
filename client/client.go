@@ -42,7 +42,11 @@ func (c *Client) GetTicker(crypto, fiat string) *Response {
 	fiat = strings.ToLower(fiat)
 	resp := new(Response)
 
-	body, err := c.sendRequest(c.url + "ticker/" + crypto + fiat)
+	url := c.url + "ticker/" + crypto + fiat
+	log.WithFields(log.Fields{
+		"url": url,
+	}).Debug("Obtaining ticker information")
+	body, err := c.sendRequest(url)
 	if err != nil {
 		resp.Err = make([]string, 1, 1)
 		resp.Err[0] = err.Error()
