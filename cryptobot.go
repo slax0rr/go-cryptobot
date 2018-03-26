@@ -92,7 +92,11 @@ func (cb *CryptoBot) conv(message, nick string, args []string) {
 
 	resp := cb.client.GetTicker(curr1, curr2)
 	if resp.Err != nil {
-		cb.irc.Write(nick + ": " + resp.Err[0])
+		log.WithFields(log.Fields{
+			"error": Err,
+		}).Debug("Ticker responded with error")
+		cb.irc.Write(nick + ": Unable to retrieve ticker data due to an unknown error")
+		return
 	}
 
 	var msg string
